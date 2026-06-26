@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from sqlalchemy import text
-
+from database import SessionLocal
+from models import Movie
 from database import engine
 from schemas import Movie
 
@@ -8,20 +9,12 @@ router = APIRouter()
 
 @router.get("/movies")
 def get_movies():
-
-    with engine.connect() as conn:
-
-        result = conn.execute(
-            text("""
-            SELECT *
-            FROM movies
-            ORDER BY id
-            """)
-        )
-
-        movies = [dict(row._mapping) for row in result]
-
-    return movies
+    db =SessionLocal()
+    try:
+        movies= db.query(Movie).all()
+        return movies
+    finally:
+        db.close()
 
 @router.post("/movies")
 def add_movie(movie: Movie):
