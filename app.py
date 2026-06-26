@@ -51,3 +51,24 @@ def add_movie(movie: Movie):
         )
 
     return {"message": "Movie added successfully"}
+
+@app.get("/movies/{movie_id}")
+def get_movie(movie_id: int):
+
+    with engine.connect() as conn:
+
+        result = conn.execute(
+            text("""
+                SELECT *
+                FROM movies
+                WHERE id = :id
+            """),
+            {"id": movie_id}
+        )
+
+        movie = result.fetchone()
+
+        if movie is None:
+            return {"message": "Movie not found"}
+
+        return dict(movie._mapping)
