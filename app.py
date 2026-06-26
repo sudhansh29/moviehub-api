@@ -1,13 +1,9 @@
 from fastapi import FastAPI
-from sqlalchemy import create_engine, text
+from sqlalchemy import  text
 import os
 from pydantic import BaseModel
 
 app = FastAPI()
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-engine = create_engine(DATABASE_URL)
 
 class Movie(BaseModel):
     title: str
