@@ -1,14 +1,11 @@
 from fastapi import FastAPI
 from database import engine
 from sqlalchemy import  text
+from schemas import Movie
 import os
-from pydantic import BaseModel
+
 
 app = FastAPI()
-
-class Movie(BaseModel):
-    title: str
-    genre: str
 
 @app.get("/")
 def home():
