@@ -72,3 +72,27 @@ def get_movie(movie_id: int):
             return {"message": "Movie not found"}
 
         return dict(movie._mapping)
+
+@app.put("/movies/{movie_id}")
+def update_movie(movie_id: int, movie: Movie):
+
+    with engine.begin() as conn:
+
+        result = conn.execute(
+            text("""
+                UPDATE movies
+                SET title = :title,
+                    genre = :genre
+                WHERE id = :id
+            """),
+            {
+                "id": movie_id,
+                "title": movie.title,
+                "genre": movie.genre
+            }
+        )
+
+        if result.rowcount == 0:
+            return {"message": "Movie not found"}
+
+    return {"message": "Movie updated successfully"}
