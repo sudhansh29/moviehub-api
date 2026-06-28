@@ -7,9 +7,39 @@ router = APIRouter()
 
 @router.post("/register")
 def register(user: User):
+    with engine.connect() as conn:
+        result = conn.execute(
+        text("""
+            SELECT id
+            FROM users
+            WHERE email = :email
+        """),
+        {
+            "email": user.email
+        }
+    )
+        existing_user = result.fetchone()
 
+    if existing_user:
+        return {"message":"Email already exists"}
+    
+    with engine.begin() as conn:
+        conn.execute(
+        text("""
+            INSERT INTO users
+            (username,email,password)
+
+            VALUES
+            (:username,:email,:password)
+        """),
+        {
+            "username": user.username,
+            "email": user.email,
+            "password": user.password
+        }
+    )
+        
     return {
-        "username": user.username,
-        "email": user.email,
-        "message": "User received successfully"
-    }
+    "message": "User registered successfully"}
+
+    
