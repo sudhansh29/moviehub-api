@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from sqlalchemy import text
 from database import engine
 from schemas import User
+from utils.security import hash_password
 
 router = APIRouter()
 
@@ -35,7 +36,7 @@ def register(user: User):
         {
             "username": user.username,
             "email": user.email,
-            "password": user.password
+            "password": hash_password(user.password)
         }
     )
         
