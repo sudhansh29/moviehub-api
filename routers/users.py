@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from sqlalchemy import text
 from database import engine
-from schemas import User
-from utils.security import hash_password
+from schemas import User,LoginUser
+from utils.security import hash_password,verify_password
 
 router = APIRouter()
 
@@ -42,5 +42,30 @@ def register(user: User):
         
     return {
     "message": "User registered successfully"}
+
+@router.post("/login")
+def login(user:LoginUser):
+    with engine.connect() as conn:
+
+        result = conn.execute(
+            text("""
+                SELECT *
+                FROM users
+                WHERE email = :email
+            """),
+            {
+                "email": user.email
+            }
+        )
+        db_user = result.fetchone()
+    if not db_user:
+        return{"message":"invalid mail or password"}
+    if not verify_password(user.password,db_user.password):
+        return {
+        "message":"Invalid email or password"}
+    
+    return {
+    "message": "Login Successful"}
+
 
     
