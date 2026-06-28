@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from database import engine
 from sqlalchemy import  text
-from schemas import Movie
+from schemas import Movie as MovieSchema
+from models import Movie as MovieModel
 import os
 from routers.movies import router as movie_router
 
